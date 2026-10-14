@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>br0b3r.log</title>
+<link rel="stylesheet" href="_ds/nocturne-57996d55-a317-4928-89ea-531cdbc7d8ab/styles.css">
+<script src="_ds/nocturne-57996d55-a317-4928-89ea-531cdbc7d8ab/_ds_bundle.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<style>
+body{margin:0;background:radial-gradient(1200px 600px at 10% -10%, #20233a 0%, var(--color-bg) 60%) fixed, var(--color-bg);}
+a{color:var(--color-accent);} a:hover{color:var(--color-accent-400);}
+[data-md]{color:var(--color-neutral-200);font-size:16px;line-height:1.75;}
+[data-md] h1,[data-md] h2{font-size:26px;margin:40px 0 12px;color:var(--color-text);}
+[data-md] h3{font-size:20px;margin:28px 0 10px;color:var(--color-text);}
+[data-md] p{margin:0 0 16px;}
+[data-md] ul,[data-md] ol{margin:0 0 16px;padding-left:22px;}
+[data-md] code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;padding:1px 5px;border-radius:4px;background:var(--color-accent-900);color:var(--color-accent-200);}
+[data-md] pre{margin:0 0 20px;padding:14px 16px;border-radius:var(--radius-md);background:#0f111b;box-shadow:var(--shadow-sm);overflow-x:auto;}
+[data-md] pre code{padding:0;background:none;color:var(--color-neutral-300);font-size:12.5px;line-height:1.65;}
+[data-md] img{max-width:100%;border-radius:var(--radius-md);box-shadow:var(--shadow-sm);margin:4px 0 20px;}
+[data-md] blockquote{margin:0 0 20px;padding:12px 16px;border-radius:var(--radius-md);background:var(--color-accent-900);color:var(--color-accent-200);}
+[data-md] blockquote p:last-child{margin:0;}
+[data-md] table{width:100%;border-collapse:collapse;font-size:14px;margin:0 0 20px;}
+[data-md] th,[data-md] td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--color-divider);}
+</style>
+</helmet>
+<div style="min-height:100vh;display:flex;flex-direction:column;">
+  <nav class="nav" style="max-width:1160px;width:100%;margin:0 auto;padding:18px 28px;">
+    <a href="#/" class="nav-brand" style="display:flex;align-items:center;gap:8px;font-size:17px;color:var(--color-text);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;">
+      <i class="ph ph-terminal-window" style="color:var(--color-accent);font-size:20px;"></i>
+      <span>{{ handle }}</span>
+    </a>
+    <a href="#/" aria-current="{{ navIndex }}">Writeups</a>
+    <a href="#/whoami" aria-current="{{ navWho }}">whoami</a>
+  </nav>
+
+  <sc-if value="{{ isIndex }}" hint-placeholder-val="{{ true }}">
+  <main style="max-width:1160px;width:100%;margin:0 auto;padding:32px 28px 96px;display:flex;flex-direction:column;gap:40px;">
+    <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
+      <p style="margin:0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;color:var(--color-neutral-500);">$ ls ./writeups …</p>
+    </sc-if>
+
+    <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+      <div class="card elev-sm" style="padding:32px 36px;gap:12px;max-width:860px;">
+        <div style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;color:var(--color-neutral-400);"><span style="color:var(--color-accent-400);">$</span> ls ./writeups<br>total 0</div>
+        <h1 style="margin:0;font-size:36px;">No writeups yet.</h1>
+        <p style="margin:0;color:var(--color-neutral-400);font-size:15px;">The first room is on its way.</p>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ hasPosts }}" hint-placeholder-val="{{ false }}">
+      <a href="{{ latest.href }}" class="card elev-sm" style="text-decoration:none;color:var(--color-text);padding:32px 36px;gap:16px;max-width:860px;background:linear-gradient(135deg,var(--color-accent-900),var(--color-surface) 60%);" style-hover="box-shadow:var(--shadow-md);">
+        <div style="display:flex;align-items:center;gap:10px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent);"><span>Latest writeup</span><span style="color:var(--color-neutral-500);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:0;">{{ latest.date }}</span></div>
+        <h1 style="margin:0;font-size:52px;letter-spacing:-.025em;">{{ latest.title }}</h1>
+        <p style="margin:0;color:var(--color-neutral-300);font-size:17px;line-height:1.6;max-width:620px;text-wrap:pretty;">{{ latest.summary }}</p>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--color-neutral-400);">
+          <span class="tag {{ latest.diffCls }}">{{ latest.difficulty }}</span>
+          <span style="display:flex;align-items:center;gap:4px;"><i class="ph {{ latest.osIcon }}"></i>{{ latest.os }}</span>
+          <span class="btn btn-primary" style="margin-left:auto;white-space:nowrap;flex:none;">Read writeup<i class="ph ph-arrow-right"></i></span>
+        </div>
+      </a>
+    </sc-if>
+
+    <sc-if value="{{ hasRest }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <h6 style="margin:0;color:var(--color-neutral-500);">Earlier rooms</h6>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;">
+          <sc-for list="{{ rest }}" as="p" hint-placeholder-count="4">
+            <a href="{{ p.href }}" class="card elev-sm" style="text-decoration:none;color:var(--color-text);padding:20px 22px;gap:12px;" style-hover="box-shadow:var(--shadow-md);">
+              <span style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;color:var(--color-neutral-500);">{{ p.date }}</span>
+              <div class="card-title" style="font-size:22px;">{{ p.title }}</div>
+              <p class="card-body" style="font-size:14px;color:var(--color-neutral-300);opacity:1;line-height:1.6;">{{ p.summary }}</p>
+              <div class="card-meta" style="gap:10px;"><span class="tag {{ p.diffCls }}">{{ p.difficulty }}</span><span style="display:flex;align-items:center;gap:4px;"><i class="ph {{ p.osIcon }}"></i>{{ p.os }}</span><i class="ph ph-arrow-right" style="margin-left:auto;color:var(--color-accent);font-size:14px;"></i></div>
+            </a>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+  </main>
+  </sc-if>
+
+  <sc-if value="{{ isPost }}" hint-placeholder-val="{{ false }}">
+  <main style="max-width:1160px;width:100%;margin:0 auto;padding:28px 28px 96px;">
+    <article style="max-width:740px;display:flex;flex-direction:column;gap:28px;">
+      <a href="#/" class="btn btn-ghost" style="white-space:nowrap;flex:none;align-self:flex-start;font-size:13px;"><i class="ph ph-arrow-left"></i>All writeups</a>
+      <sc-if value="{{ notFound }}" hint-placeholder-val="{{ false }}">
+        <p style="margin:0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--color-neutral-500);font-size:13px;">404: writeup not found.</p>
+      </sc-if>
+      <sc-if value="{{ hasCur }}" hint-placeholder-val="{{ false }}">
+        <header style="display:flex;flex-direction:column;gap:14px;">
+          <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+            <span class="tag {{ cur.diffCls }}">{{ cur.difficulty }}</span>
+            <span class="tag tag-neutral" style="display:inline-flex;gap:4px;"><i class="ph {{ cur.osIcon }}"></i>{{ cur.os }}</span>
+            <span style="font-size:13px;color:var(--color-neutral-500);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;margin-left:6px;">{{ cur.date }}</span>
+          </div>
+          <h1 style="margin:0;font-size:48px;">{{ cur.title }}</h1>
+          <p style="margin:0;font-size:17px;color:var(--color-neutral-300);text-wrap:pretty;">{{ cur.summary }}</p>
+          <sc-if value="{{ cur.room }}" hint-placeholder-val="{{ false }}">
+            <a href="{{ cur.room }}" target="_blank" rel="noopener" class="btn btn-secondary" style="white-space:nowrap;flex:none;align-self:flex-start;font-size:13px;"><i class="ph ph-arrow-square-out"></i>Room on TryHackMe</a>
+          </sc-if>
+        </header>
+        {{ body }}
+      </sc-if>
+    </article>
+  </main>
+  </sc-if>
+
+  <sc-if value="{{ isWho }}" hint-placeholder-val="{{ false }}">
+  <main style="max-width:1160px;width:100%;margin:0 auto;padding:40px 28px 96px;">
+    <div style="max-width:680px;display:flex;flex-direction:column;gap:36px;">
+      <header style="display:flex;flex-direction:column;gap:14px;">
+        <div style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;color:var(--color-neutral-400);"><span style="color:var(--color-accent-400);">$</span> whoami</div>
+        <h1 style="margin:0;font-size:52px;letter-spacing:-.025em;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:500;">{{ handle }}</h1>
+        <p style="margin:0;color:var(--color-neutral-300);font-size:18px;line-height:1.6;text-wrap:pretty;">Computer Science student interested in penetration testing and white-hat hacking. Currently learning on TryHackMe and writing up the rooms I complete.</p>
+      </header>
+
+      <section style="display:flex;flex-direction:column;gap:12px;">
+        <h6 style="margin:0;color:var(--color-neutral-500);">Certifications</h6>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div class="card elev-sm" style="flex-direction:row;align-items:center;gap:12px;padding:12px 16px;">
+            <i class="ph ph-seal-check" style="color:var(--color-accent);font-size:20px;"></i>
+            <span style="font-size:15px;">CompTIA Security+</span>
+          </div>
+          <div class="card elev-sm" style="flex-direction:row;align-items:center;gap:12px;padding:12px 16px;">
+            <i class="ph ph-seal-check" style="color:var(--color-accent);font-size:20px;"></i>
+            <span style="font-size:15px;">Google Cybersecurity Professional Certificate</span>
+          </div>
+        </div>
+      </section>
+
+      <section style="display:flex;flex-direction:column;gap:12px;">
+        <h6 style="margin:0;color:var(--color-neutral-500);">Find me</h6>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          <a href="https://tryhackme.com/p/Brober" target="_blank" rel="noopener" class="btn btn-primary" style="white-space:nowrap;flex:none;"><i class="ph ph-flag"></i>TryHackMe · Brober<i class="ph ph-arrow-up-right"></i></a>
+          <a href="#/" class="btn btn-secondary" style="white-space:nowrap;flex:none;"><i class="ph ph-notebook"></i>{{ countLabel }}</a>
+        </div>
+      </section>
+    </div>
+  </main>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;handle&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;br0b3r.log&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;repo&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Publishing&quot;}}">
+class Component extends DCLogic {
+  state = { route: this.parse(), posts: [], loading: true, mdReady: !!window.marked };
+  parse() {
+    const h = (location.hash || '#/').slice(1);
+    if (h.startsWith('/w/')) return { view: 'post', slug: decodeURIComponent(h.slice(3)) };
+    if (h === '/whoami') return { view: 'who' };
+    return { view: 'index' };
+  }
+  componentDidMount() {
+    this.onHash = () => { this.setState({ route: this.parse() }); window.scrollTo(0, 0); };
+    window.addEventListener('hashchange', this.onHash);
+    if (!window.marked) { this.poll = setInterval(() => { if (window.marked) { clearInterval(this.poll); this.setState({ mdReady: true }); } }, 150); }
+    this.load();
+  }
+  componentWillUnmount() { window.removeEventListener('hashchange', this.onHash); clearInterval(this.poll); }
+  frontmatter(src) {
+    const m = src.match(/^---\s*\n([\s\S]*?)\n---\s*\n?/);
+    const meta = {};
+    if (m) m[1].split('\n').forEach(l => { const i = l.indexOf(':'); if (i > 0) meta[l.slice(0, i).trim().toLowerCase()] = l.slice(i + 1).trim().replace(/^["']|["']$/g, ''); });
+    return { meta, body: m ? src.slice(m[0].length) : src };
+  }
+  async load() {
+    const repo = (this.props.repo ?? '').trim();
+    let files = [];
+    try {
+      if (repo) {
+        const r = await fetch(`https://api.github.com/repos/${repo}/contents/writeups`);
+        if (r.ok) files = (await r.json()).filter(f => f.type === 'file' && /\.md$/i.test(f.name) && !f.name.startsWith('_')).map(f => f.name);
+      }
+      if (!files.length) {
+        const r = await fetch('writeups/index.json', { cache: 'no-store' });
+        if (r.ok) files = await r.json();
+      }
+    } catch (e) {}
+    const posts = (await Promise.all(files.map(async name => {
+      try {
+        const r = await fetch('writeups/' + name, { cache: 'no-store' });
+        if (!r.ok) return null;
+        const { meta, body } = this.frontmatter(await r.text());
+        const slug = name.replace(/\.md$/i, '');
+        return { slug, body, title: meta.title || slug, date: meta.date || '', difficulty: meta.difficulty || 'Easy',
+          os: meta.os || 'Linux', summary: meta.summary || '', room: meta.room || '' };
+      } catch (e) { return null; }
+    }))).filter(Boolean).sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    this.setState({ posts, loading: false });
+  }
+  renderVals() {
+    const handle = this.props.handle ?? 'br0b3r.log';
+    const { route, loading } = this.state;
+    const diffCls = d => ({ easy: 'tag-neutral', medium: 'tag-accent-2', hard: 'tag-accent', insane: 'tag-outline' })[(d || '').toLowerCase()] || 'tag-neutral';
+    const osIcon = o => /win/i.test(o) ? 'ph-windows-logo' : /linux/i.test(o) ? 'ph-linux-logo' : 'ph-desktop';
+    const posts = this.state.posts.map(p => ({ ...p, href: '#/w/' + encodeURIComponent(p.slug), diffCls: diffCls(p.difficulty), osIcon: osIcon(p.os) }));
+    const cur = route.view === 'post' ? posts.find(p => p.slug === route.slug) : null;
+    let body = null;
+    if (cur) {
+      const safe = cur.body.replace(/\b([A-Za-z]{2,6})\{[^}\n]*\}/g, (m, pre) => /^(thm|flag|htb|ctf|picoctf)$/i.test(pre) ? pre + '{••••••••••••}' : m);
+      const html = window.marked ? window.marked.parse(safe) : '';
+      body = window.marked
+        ? React.createElement('div', { 'data-md': '', dangerouslySetInnerHTML: { __html: html } })
+        : React.createElement('pre', { style: { whiteSpace: 'pre-wrap', color: 'var(--color-neutral-300)' } }, safe);
+    }
+    const n = posts.length;
+    return {
+      handle, latest: posts[0] || {}, rest: posts.slice(1),
+      isIndex: route.view === 'index', isPost: route.view === 'post', isWho: route.view === 'who',
+      navIndex: route.view !== 'who' ? 'page' : undefined, navWho: route.view === 'who' ? 'page' : undefined,
+      isLoading: loading, isEmpty: !loading && n === 0, hasPosts: n > 0, hasRest: n > 1,
+      cur: cur || {}, hasCur: !!cur, notFound: route.view === 'post' && !loading && !cur, body,
+      countLabel: n === 1 ? '1 writeup' : n + ' writeups'
+    };
+  }
+}
+</script>
+</body>
+</html>
